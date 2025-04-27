@@ -1,13 +1,14 @@
 const express = require('express');
 const admin = require('firebase-admin');
 const cors = require('cors');
-const os = require('os'); // 📦 تحميل مكتبة os هنا
+const os = require('os');
 const app = express();
-const PORT = process.env.PORT || 3000; // 🌟 استخدام متغير بيئة
+const PORT = process.env.PORT || 3000;
+
+// 🛡️ تحميل بيانات خدمة Firebase Admin من متغير البيئة
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 // تهيئة Firebase Admin
-const serviceAccount = require('./service-account.json');
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://messageme-app-2d2a9.firebaseio.com"
@@ -20,7 +21,7 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// مسار الصحة
+// Health Check
 app.get('/health', (req, res) => {
   console.log('💚 Health check requested');
   res.json({
@@ -30,7 +31,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// مسار إرسال الإشعارات
+// Send Notification Endpoint
 app.post('/send-notification', async (req, res) => {
   console.log('📩 New notification request received:', {
     ip: req.ip,
@@ -72,7 +73,7 @@ app.post('/send-notification', async (req, res) => {
         payload: { 
           aps: { 
             sound: 'default',
-            badge: badge !== undefined ? Number(badge) : 1 // ✅ جعل badge متغيراً
+            badge: badge !== undefined ? Number(badge) : 1
           } 
         }
       }
@@ -100,7 +101,7 @@ app.post('/send-notification', async (req, res) => {
   }
 });
 
-// تشغيل الخادم
+// Start Server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Notification server running on:
   - Local:   http://localhost:${PORT}
@@ -108,7 +109,7 @@ app.listen(PORT, '0.0.0.0', () => {
   - Network: http://${getLocalIpAddress()}:${PORT}`);
 });
 
-// دالة للحصول على عنوان IP المحلي
+// Helper function to get Local IP Address
 function getLocalIpAddress() {
   const interfaces = os.networkInterfaces();
   for (const name of Object.keys(interfaces)) {
