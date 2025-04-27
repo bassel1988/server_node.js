@@ -3,7 +3,9 @@ const admin = require('firebase-admin');
 const cors = require('cors');
 const os = require('os');
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// استخدم المتغير PORT الذي توفره البيئة أو استخدم 10000كمنفذ افتراضي
+const PORT = process.env.PORT || 10000;
 
 // 🛡️ تحميل بيانات خدمة Firebase Admin من متغير البيئة
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
